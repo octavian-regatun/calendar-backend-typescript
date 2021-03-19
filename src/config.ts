@@ -6,8 +6,9 @@ const config: Config = {
     CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
   },
   MONGODB: {
-    URI: `mongodb+srv://${process.env.MONGODB_USER as string}:${process.env
-      .MONGODB_PASSWORD as string}@main.bcluj.mongodb.net/main?retryWrites=true&w=majority`,
+    URI: `mongodb+srv://${process.env.MONGODB_USER as string}:${
+      process.env.MONGODB_PASSWORD as string
+    }@main.bcluj.mongodb.net/main?retryWrites=true&w=majority`,
   },
   JWT_SECRET: process.env.JWT_SECRET as string,
 };
