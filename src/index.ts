@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import config from './config';
 import { routes } from './routes/routes';
+import path from 'path';
 
 (async (): Promise<void> => {
   await import('./database');
@@ -15,13 +16,16 @@ import { routes } from './routes/routes';
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client')));
+
+    // Handle React routing, return all requests to React app
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client', 'index.html'));
+    });
+  }
+
   app.use('/api', routes);
-
-  app.post('/', (req, res) => {
-    const { tokenId }: { tokenId: string } = req.body;
-
-    res.send(tokenId).status(200);
-  });
 
   app.listen(config.PORT, () => {
     console.log(`Server running on port: ${config.PORT}`);
