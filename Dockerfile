@@ -2,7 +2,6 @@ FROM node:lts-alpine
 WORKDIR /app
 COPY . ./calendar-backend-typescript
 RUN cd calendar-backend-typescript && npm install
-COPY .env ./calendar-backend-typescript
 RUN apk add --update git
 RUN git clone https://github.com/octavian-regatun/calendar-frontend-typescript
 RUN cd calendar-frontend-typescript && npm install
