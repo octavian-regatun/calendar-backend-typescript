@@ -5,6 +5,10 @@ import { users } from './users/users';
 
 const router = express.Router();
 
+router.get('/', (req, res) => {
+  res.send('server is working');
+});
+
 router.use('/auth', auth);
 router.use('/users', isAuthenticated, users);
 
