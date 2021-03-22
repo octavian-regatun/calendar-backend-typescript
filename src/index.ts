@@ -16,6 +16,8 @@ import path from 'path';
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
+  app.use('/api', routes);
+
   if (process.env.NODE_ENV === 'production') {
     app.use(
       express.static(path.join(__dirname, process.env.CLIENT_PATH || '')),
@@ -28,8 +30,6 @@ import path from 'path';
       );
     });
   }
-
-  app.use('/api', routes);
 
   app.listen(config.PORT, () => {
     console.log(`Server running on port: ${config.PORT}`);
