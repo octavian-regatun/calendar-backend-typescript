@@ -11,6 +11,7 @@ const config: Config = {
     }@main.bcluj.mongodb.net/main?retryWrites=true&w=majority`,
   },
   JWT_SECRET: process.env.JWT_SECRET as string,
+  HERE_API_KEY: process.env.HERE_API_KEY as string,
 };
 
 export default config;

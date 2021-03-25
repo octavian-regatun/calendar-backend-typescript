@@ -7,6 +7,7 @@ interface Config {
     URI: string;
   };
   JWT_SECRET: string;
+  HERE_API_KEY: string;
 }
 
 export default Config;
