@@ -2,9 +2,9 @@ import {
   getModelForClass,
   modelOptions,
   prop,
-  Severity,
+  Severity
 } from '@typegoose/typegoose';
-import { Location } from '../interfaces/location.interface';
+import { LatLon } from '../interfaces/latLon.interface';
 
 @modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Event {
@@ -21,7 +21,10 @@ export class Event {
   public toDate?: Date;
 
   @prop()
-  public location?: Location;
+  public location?: string;
+
+  @prop()
+  public latLon?: LatLon;
 
   @prop()
   public color?: string;

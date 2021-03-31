@@ -27,6 +27,12 @@ router.post('/', async (req, res) => {
     newEvent.fromDate = new Date(event.fromDate);
     newEvent.toDate = event.toDate ? new Date(event.toDate) : undefined;
     newEvent.location = event.location;
+    newEvent.latLon = event.latLon
+      ? {
+          lat: parseFloat(event.latLon.lat),
+          lon: parseFloat(event.latLon.lon),
+        }
+      : undefined;
     newEvent.author = req.id as string;
     newEvent.participants = [req.id as string];
 
