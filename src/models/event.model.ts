@@ -2,7 +2,7 @@ import {
   getModelForClass,
   modelOptions,
   prop,
-  Severity
+  Severity,
 } from '@typegoose/typegoose';
 import { LatLon } from '../interfaces/latLon.interface';
 

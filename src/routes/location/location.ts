@@ -22,4 +22,3 @@ router.get('/:ip', async (req, res) => {
 });
 
 export { router as location };
-
