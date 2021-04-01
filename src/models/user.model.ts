@@ -39,3 +39,11 @@ export class User {
 }
 
 export const UserModel = getModelForClass(User);
+
+export interface UserPublic {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: Gender;
+}
