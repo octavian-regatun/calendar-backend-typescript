@@ -7,5 +7,3 @@ RUN git clone https://github.com/octavian-regatun/calendar-frontend-typescript
 RUN cd calendar-frontend-typescript && npm install
 RUN cd calendar-frontend-typescript && npm run build
 CMD cd calendar-backend-typescript && npm run start
-EXPOSE 8080
-
