@@ -6,19 +6,7 @@ import { User, UserModel, UserPublic } from '../../models/user.model';
 
 const router = express.Router();
 
-router.get('/:id', sameId, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const user = await UserModel.findById(req.id);
-
-    res.send(user);
-  } catch {
-    res.sendStatus(500);
-  }
-});
-
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   const usersFound = await UserModel.find();
 
   const users: UserPublic[] = [];
@@ -36,6 +24,16 @@ router.get('/', async (req, res) => {
   }
 
   res.send(users);
+});
+
+router.get('/', async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.id);
+
+    res.send(user);
+  } catch {
+    res.sendStatus(500);
+  }
 });
 
 export { router as users };

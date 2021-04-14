@@ -7,16 +7,19 @@ import Providers from '../../enums/provider.enum';
 import { User, UserModel } from '../../models/user.model';
 import jwt from 'jsonwebtoken';
 import JWTPayload from '../../interfaces/jwtPayload.interface';
+import { customAlphabet } from 'nanoid';
 
 const router = express.Router();
 
 async function saveUser(payload: TokenPayload): Promise<DocumentType<User>> {
   const newUser = new UserModel();
+  const nanoid = customAlphabet('1234567890abcdef', 8);
 
   newUser._id = payload.sub;
   newUser.provider = Providers.GOOGLE;
   newUser.firstName = payload.given_name as string;
   newUser.lastName = payload.family_name as string;
+  newUser.username = nanoid();
   newUser.email = payload.email as string;
   newUser.gender = Gender.UNKNOWN;
 
@@ -59,9 +62,9 @@ async function getPayload(tokenId: string): Promise<TokenPayload | undefined> {
 }
 
 router.post('/', async (req, res) => {
-  const { tokenID }: { tokenID: string } = req.body;
+  const { tokenId }: { tokenId: string } = req.body;
 
-  const payload = await getPayload(tokenID);
+  const payload = await getPayload(tokenId);
 
   if (!payload) {
     return res.send('payload not found, tokenID is not valid').status(404);
@@ -72,11 +75,11 @@ router.post('/', async (req, res) => {
       payload.sub,
     )) as DocumentType<User>;
 
-    res.send({ token: createJWT(existingUser) });
+    res.send(createJWT(existingUser));
   } else {
     const newUser = await saveUser(payload);
 
-    res.send({ token: createJWT(newUser) });
+    res.send(createJWT(newUser));
   }
 });
 
