@@ -18,6 +18,9 @@ export class User {
   public lastName!: string;
 
   @prop({ required: true })
+  public username!: string;
+
+  @prop({ required: true })
   public email!: string;
 
   @prop({ required: true, default: Gender.UNKNOWN })

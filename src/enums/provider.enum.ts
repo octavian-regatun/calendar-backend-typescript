@@ -1,7 +1,5 @@
 enum Providers {
-  GOOGLE = 'GOOGLE',
-  FACEBOOK = 'FACEBOOK',
-  APPLE = 'APPLE',
+  GOOGLE = 'g',
 }
 
 export default Providers;

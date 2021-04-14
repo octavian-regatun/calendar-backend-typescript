@@ -5,19 +5,14 @@ import { UserModel } from '../../models/user.model';
 
 const router = express.Router();
 
-async function isPendingOrAccepted(
-  requesterId: string,
-  recipientEmail: string,
-) {
-  const recipientUser = await UserModel.findByEmail(recipientEmail);
-
+async function isPendingOrAccepted(requesterId: string, recipientId: string) {
   const friendship = await FriendshipModel.findOne({
     $and: [
       {
-        $or: [{ recipient: requesterId }, { recipient: recipientUser?._id }],
+        $or: [{ recipient: requesterId }, { recipient: recipientId }],
       },
       {
-        $or: [{ requester: requesterId }, { requester: recipientUser?._id }],
+        $or: [{ requester: requesterId }, { requester: recipientId }],
       },
     ],
   });
@@ -27,7 +22,19 @@ async function isPendingOrAccepted(
   return false;
 }
 
-router.post('/add-friend', async (req, res) => {
+router.get('friend-request', async (req, res) => {
+  const users = await UserModel.find();
+
+  for (const [index, user] of users.entries()) {
+    if (user._id === req.id) {
+      users.splice(index, 1);
+    }
+  }
+
+  return res.send(users);
+});
+
+router.post('/friend-request', async (req, res) => {
   interface Body {
     email?: string;
   }
@@ -35,6 +42,14 @@ router.post('/add-friend', async (req, res) => {
   const { email }: Body = req.body;
 
   try {
+    const recipientUser = await UserModel.findByEmail(email as string);
+
+    if (
+      await isPendingOrAccepted(req.id as string, recipientUser?._id as string)
+    ) {
+      return res.sendStatus(500);
+    }
+
     const foundUser = await UserModel.findOne({ email: email });
 
     if (!foundUser || foundUser._id === req.id) {
@@ -57,7 +72,7 @@ router.post('/add-friend', async (req, res) => {
   }
 });
 
-router.get('/friends', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const friendships = await FriendshipModel.find({
       $and: [
@@ -70,6 +85,8 @@ router.get('/friends', async (req, res) => {
         },
       ],
     });
+
+    return res.send(friendships);
   } catch (e) {
     console.log(e);
 
