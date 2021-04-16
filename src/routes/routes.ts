@@ -1,6 +1,6 @@
 import express from 'express';
 import { isAuthenticated } from '../middleware/auth';
-import { auth } from './auth/auth';
+import { google } from './auth/google';
 import { events } from './events/events';
 import { friendships } from './friendships/friendships';
 import { location } from './location/location';
@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
   res.send('server is working');
 });
 
-router.use('/auth', auth);
+router.use('/auth/google', google);
 router.use('/users', isAuthenticated, users);
 router.use('/events', isAuthenticated, events);
 router.use('/location', isAuthenticated, location);

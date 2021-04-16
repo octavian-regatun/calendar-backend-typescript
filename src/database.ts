@@ -8,6 +8,7 @@ mongoose
   .connect(config.MONGODB.URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   })
   .then(() => console.log('Connected to MongoDB Atlas'))
   .catch(console.error);
