@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start:debug": "ts-node --inspect=5858 --debug-brk --ignore false src/index.ts",
-    "start:dev": "nodemon",
+    "debug": "ts-node --inspect=5858 --debug-brk --ignore false src/index.ts",
+    "dev": "nodemon",
     "start": "npm run build && node build/index.js",
     "lint": "eslint . --ext .ts",
     "prettier-format": "run-script-os",

@@ -1,5 +1,4 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
-import { ModelType } from '@typegoose/typegoose/lib/types';
 import Gender from '../enums/gender.enum';
 import Provider from '../enums/provider.enum';
 import Role from '../enums/role.enum';
@@ -14,8 +13,8 @@ export class User {
   @prop({ required: true })
   public firstName!: string;
 
-  @prop({ required: true })
-  public lastName!: string;
+  @prop()
+  public lastName?: string;
 
   @prop({ required: true })
   public username!: string;
@@ -40,10 +39,6 @@ export class User {
 
   @prop({ default: undefined })
   public isLogged?: boolean;
-
-  static findByEmail(this: ModelType<User>, email: string) {
-    return this.findOne({ email: email });
-  }
 }
 
 export const UserModel = getModelForClass(User);

@@ -22,27 +22,29 @@ async function isPendingOrAccepted(requesterId: string, recipientId: string) {
   return false;
 }
 
-router.get('friend-request', async (req, res) => {
-  const users = await UserModel.find();
+router.get('/suggestions', async (req, res) => {
+  let users = await UserModel.find();
 
-  for (const [index, user] of users.entries()) {
-    if (user._id === req.id) {
-      users.splice(index, 1);
-    }
-  }
+  users = users.filter(user => user._id !== req.id);
 
-  return res.send(users);
+  const friendships = await FriendshipModel.find({ requester: req.id });
+
+  users = users.filter(
+    user => !friendships.find(friendship => user._id === friendship.recipient),
+  );
+
+  return res.send(users.map(({ _id, username }) => ({ _id, username })));
 });
 
-router.post('/friend-request', async (req, res) => {
+router.post('/request', async (req, res) => {
   interface Body {
-    email?: string;
+    username?: string;
   }
 
-  const { email }: Body = req.body;
+  const { username }: Body = req.body;
 
   try {
-    const recipientUser = await UserModel.findByEmail(email as string);
+    const recipientUser = await UserModel.findOne({ username });
 
     if (
       await isPendingOrAccepted(req.id as string, recipientUser?._id as string)
@@ -50,7 +52,7 @@ router.post('/friend-request', async (req, res) => {
       return res.sendStatus(500);
     }
 
-    const foundUser = await UserModel.findOne({ email: email });
+    const foundUser = await UserModel.findOne({ username: username });
 
     if (!foundUser || foundUser._id === req.id) {
       return res.sendStatus(500);
@@ -72,26 +74,67 @@ router.post('/friend-request', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+function queryBasedOnStatus(status: string) {
+  switch (status) {
+    case 'accepted':
+      return { status: FriendshipStatus.ACCEPTED };
+
+    case 'pending':
+      return { status: FriendshipStatus.PENDING };
+
+    case 'all':
+      return {
+        $or: [
+          { status: FriendshipStatus.ACCEPTED },
+          { status: FriendshipStatus.PENDING },
+        ],
+      };
+
+    default:
+      return {
+        $or: [
+          { status: FriendshipStatus.ACCEPTED },
+          { status: FriendshipStatus.PENDING },
+        ],
+      };
+  }
+}
+
+router.get('/:status', async (req, res) => {
+  const { status } = req.params;
+
   try {
     const friendships = await FriendshipModel.find({
-      $and: [
-        { status: FriendshipStatus.ACCEPTED },
-        {
-          $or: [
-            { recipient: req.id as string },
-            { requester: req.id as string },
-          ],
-        },
-      ],
+      $and: [queryBasedOnStatus(status), { requester: req.id as string }],
     });
 
-    return res.send(friendships);
+    const users = await Promise.all(
+      friendships.map(async friendship => {
+        const user = await UserModel.findById(friendship.recipient);
+
+        return { user, status: friendship.status };
+      }),
+    );
+
+    res.send(users);
   } catch (e) {
     console.log(e);
 
     return res.sendStatus(500);
   }
+});
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  await FriendshipModel.findOneAndDelete({
+    $or: [
+      { recipient: id, requester: req.id },
+      { recipient: req.id, requester: id },
+    ],
+  });
+
+  return res.sendStatus(200);
 });
 
 export { router as friendships };

@@ -1,9 +1,35 @@
 import { DocumentType } from '@typegoose/typegoose';
-import express from 'express';
-import { User, UserModel, UserPublic } from '../../models/user.model';
 import Filter from 'bad-words';
+import express from 'express';
+import PublicUser from '../../interfaces/publicUser';
+import { User, UserModel } from '../../models/user.model';
 
 const router = express.Router();
+
+router.get('/all', async (req, res) => {
+  const publicInfoUsers: { _id: string; username: string }[] = [];
+
+  try {
+    const users = await UserModel.find();
+
+    for (const user of users) {
+      publicInfoUsers.push({ _id: user._id, username: user.username });
+    }
+
+    return res.send(publicInfoUsers);
+  } catch (e) {
+    console.log(e);
+    return res.sendStatus(500);
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const user = UserModel.findById(id);
+
+  res.send({} as PublicUser);
+});
 
 router.get('/', async (req, res) => {
   try {
@@ -30,15 +56,15 @@ async function isUsernameValid(username: string): Promise<boolean> {
 
 router.patch('/', async (req, res) => {
   interface Body {
-    username: string;
+    id: string;
   }
 
-  const { username }: Body = req.body;
+  const { id }: Body = req.body;
 
   const thisUser = (await UserModel.findById(req.id)) as DocumentType<User>;
 
-  if (isUsernameValid(username)) {
-    thisUser.username = username;
+  if (isUsernameValid(id)) {
+    thisUser.username = id;
   } else {
     return res.sendStatus(500);
   }

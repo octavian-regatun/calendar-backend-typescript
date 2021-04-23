@@ -17,8 +17,15 @@ async function saveUser(payload: TokenPayload): Promise<DocumentType<User>> {
 
   newUser._id = payload.sub;
   newUser.provider = Providers.GOOGLE;
-  newUser.firstName = payload.given_name as string;
-  newUser.lastName = payload.family_name as string;
+  newUser.firstName = payload.given_name
+    ? payload.given_name.charAt(0).toLocaleUpperCase() +
+      payload.given_name.substring(1)
+    : (payload.given_name as string);
+
+  newUser.lastName = payload.family_name
+    ? payload.family_name.charAt(0).toLocaleUpperCase() +
+      payload.family_name.substring(1)
+    : undefined;
   newUser.username = nanoid();
   newUser.email = payload.email as string;
   newUser.gender = Gender.UNKNOWN;

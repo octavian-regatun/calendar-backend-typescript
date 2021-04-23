@@ -1,6 +1,6 @@
 enum FriendshipStatus {
-  PENDING = 'P',
-  ACCEPTED = 'A',
+  PENDING = 'p',
+  ACCEPTED = 'a',
 }
 
 export default FriendshipStatus;
