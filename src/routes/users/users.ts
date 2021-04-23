@@ -56,15 +56,15 @@ async function isUsernameValid(username: string): Promise<boolean> {
 
 router.patch('/', async (req, res) => {
   interface Body {
-    id: string;
+    username: string;
   }
 
-  const { id }: Body = req.body;
+  const { username }: Body = req.body;
 
   const thisUser = (await UserModel.findById(req.id)) as DocumentType<User>;
 
-  if (isUsernameValid(id)) {
-    thisUser.username = id;
+  if (isUsernameValid(username)) {
+    thisUser.username = username;
   } else {
     return res.sendStatus(500);
   }
