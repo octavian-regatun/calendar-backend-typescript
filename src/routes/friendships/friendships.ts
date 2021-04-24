@@ -74,7 +74,7 @@ router.post('/request', async (req, res) => {
   }
 });
 
-function queryBasedOnStatus(status: string) {
+function queryBasedOnStatus(status: string | undefined) {
   switch (status) {
     case 'accepted':
       return { status: FriendshipStatus.ACCEPTED };
@@ -100,8 +100,13 @@ function queryBasedOnStatus(status: string) {
   }
 }
 
-router.get('/:status', async (req, res) => {
-  const { status } = req.params;
+router.get('/', async (req, res) => {
+  interface Query {
+    status?: string;
+    type?: string;
+  }
+
+  const { status, type } = req.query as Query;
 
   try {
     const friendships = await FriendshipModel.find({
