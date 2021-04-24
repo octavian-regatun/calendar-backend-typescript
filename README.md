@@ -2,11 +2,13 @@
 
 ### Routes:
 
+```
 POST: /auth/google
 
 GET: /events
 POST: /events
 DELETE: /events/:id
+```
 
 ### Hosted at:
 - master branch: https://planitly.com
